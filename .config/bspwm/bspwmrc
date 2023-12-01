@@ -1,0 +1,106 @@
+#! /bin/sh
+
+# Run monitor script
+if [ -x $HOME/.config/bin/monitor/script.sh ]; then
+    $HOME/.config/bin/monitor/script.sh
+fi
+
+# Run temperature script
+if [ -x $HOME/.config/bin/temperature/temp.sh ]; then
+    $HOME/.config/bin/temperature/temp.sh
+fi
+
+##--- Startup Commands ---##
+# Start sxhkd if not running
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+# Start dunst if not running
+pgrep -x dunst > /dev/null || dunst &
+
+# Start picom with custom configuration
+picom --config ~/.config/picom.conf &
+
+# Start pulseaudio for X11
+start-pulseaudio-x11 &
+
+# Start XFCE power manager
+xfce4-power-manager &
+
+# Start network manager applet
+nm-applet &
+
+# Enable 3-finger gesture with libinput-gestures
+libinput-gestures &
+
+# Configure mouse properties with mate-mouse-properties
+mate-mouse-properties &
+sleep 3
+killall mate-mouse-properties
+
+# Configure dual monitors with xrandr if needed
+# (Note: Consider using xrandr commands here if needed)
+
+# Disable session manager proxies for Nemo
+export SESSION_MANAGER=GNOME
+
+# Start Polybar with shapes configuration
+$HOME/.config/polybar/shapes/launch.sh &
+
+# Restore wallpaper with nitrogen
+nitrogen --restore &
+
+# Start Mopidy with custom configuration
+mopidy --config ~/.config/mopidy/mopidy.conf &
+
+# Kill existing conky processes and start a new one
+killall conky
+$HOME/.conky/conky-startup.sh &
+
+# Start Blueman applet for Bluetooth
+blueman-applet &
+
+# Start xscreensaver
+xscreensaver -no-splash &
+
+
+#### BSPWM Configuration ####
+bspc config border_radius                8
+bspc config border_width                  2
+bspc config window_gap                    10
+bspc config top_padding                   20
+bspc config bottom_padding                0
+bspc config left_padding                  0
+bspc config right_padding                 0
+bspc config single_monocle                false
+bspc config click_to_focus                true
+bspc config split_ratio                   0.50
+bspc config borderless_monocle            true
+bspc config gapless_monocle               true
+bspc config focus_by_distance             true
+bspc config focus_follows_pointer         true
+bspc config history_aware_focus           true
+bspc config remove_disabled_monitors      true
+bspc config merge_overlapping_monitors    true
+bspc config pointer_modifier mod4
+bspc config pointer_action1 move
+bspc config pointer_action2 resize_side
+bspc config pointer_action3 resize_corner
+
+#### BSPWM Coloring ####
+bspc config normal_border_color      "#4c566a"
+bspc config active_border_color      "#1e1e1e"
+bspc config focused_border_color     "#5e81ac"
+bspc config presel_feedback_color    "#5e81ac"
+bspc config urgent_border_color      "#dd2727"
+
+# Define rules for specific applications
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+# bspc rule -a oracle-sqldeveloper desktop='^8' state=floating follow=on
+bspc rule -a Chromium desktop='^2'
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
+
+# Set Java AWT to non-reparenting mode
+export _JAVA_AWT_WM_NONREPARENTING=1
+
