@@ -52,6 +52,7 @@ cp -r dotfiles/.conky ~
 chmod +x ~/.config/bspwm/bspwmrc
 chmod +x ~/.config/polybar/cuts/launch.sh
 chmod +x ~/.config/bin/*/
+```
 
 ### 2. Set Zsh as Default Shell
 
